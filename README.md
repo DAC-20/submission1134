@@ -1,6 +1,6 @@
 ## Dependencies
 ### Software
-- kubernetes 1.14 (with Xilinx FPGA device plugin enabled)
+- kubernetes 1.14
 - Xilinx SDAccel toolchain (version 2018.3)
 - go 1.10, and kubenetes related packages
 - python 3.7, and prettyTable package
@@ -10,6 +10,9 @@
 - FPGA host x86\_64 machine x2 (or more)
 
 ## Directory contents
+device\_plugin/: this folder contains the modified fpga device plugin based on [Xilinx's official device plugin](https://github.com/Xilinx/FPGA_as_a_Service/tree/master/k8s-fpga-device-plugin/trunk). 
+Note that because of open-source license constriction, we don't erase the Xilinx author information of the original version from the source code.
+
 task\_scheduler/: this folder contains the major framework components, such as the task scheduler (balancer & scalar), container manager, etc.
 
 caller/: this folder contains the go script for issuing requests to the task\_scheduler to evaluate its performance.
@@ -23,14 +26,15 @@ fpga\_app/: this folder contains some fpga applications (functions) to be manage
 3. run "go build" in the task\_sheduler/ and caller/ directory to compile and get the binaries.
 
 ### Run
-1. go to the task\_scheduler/ directory and run "./task\_scheduler" for default setting.
+1. go to the device\_plugin/ directory and install the device plugin by running "kubectl create -f fpga-device-plugin-daemonset.yml".
+2. go to the task\_scheduler/ directory and run "./task\_scheduler" for default setting.
 To get the detailed setting usage description, run "./task\_scheduler -h".
 This binary will initialize our framework and wait for function requests on the master port.
 Note that this binary won't stop running until it receives signals like SIGUP, SIGTERM or SIGINT, or please run this binary in a seperate terminal session.
-2. go to the caller/ directory and run "./caller" for default setting. 
+3. go to the caller/ directory and run "./caller" for default setting. 
 To get the detailed setting usage description, run "./caller -h".
 This binary will issue requests (with specified request-per-second and change speed) to the master port.
-3. send SIGTERM or SIGINT signal to the task\_scheduler process started in step 1 to shutdown the framework.
+4. send SIGTERM or SIGINT signal to the task\_scheduler process started in step 1 to shutdown the framework.
 
 
 If you want to do more thourough profiling, you can instead go to task\_scheduler/ directory and run "./profile.sh" which will automatically take care of the above procedures and do the evaluation continuously.
