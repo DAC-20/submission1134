@@ -9,4 +9,4 @@
 # ls ./
 # go build ./watermark_client.go
 cd $FPGA_APP_DIR
-./watermark_client
+./watermask_client
